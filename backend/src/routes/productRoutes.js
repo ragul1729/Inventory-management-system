@@ -5,10 +5,13 @@ const Product = require("../models/productModel");
 
 router.get("/", async (req,res) => {
     try{
+        console.log("Inside try block");
         const products = await Product.find();
+        console.log(products);
         res.status(200).json(products);
     }
     catch(error){
+        console.log("Inside catch block");
         res.status(500).json({ message: error.message });
     }
 })
@@ -16,6 +19,7 @@ router.get("/", async (req,res) => {
 router.post("/", async (req,res) => {
     try{
         const {  name , description , price, manufacturer } = req.body;
+        console.log(name , description , price, manufacturer);
         const newProduct = new Product( {  name , description , price, manufacturer } );
         await newProduct.save();
         res.status(201).json(newProduct);

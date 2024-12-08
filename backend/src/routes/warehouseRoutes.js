@@ -5,6 +5,7 @@ const ObjectID = mongoose.Types.ObjectId;
 
 const Warehouse = require('../models/warehouseModel');
 const Employee = require('../models/employeeModel');
+const Productswarehouse = require('../models/productswarehouseModel');
 
 router.get("/", async (req,res) => {
     try{
@@ -30,8 +31,9 @@ router.post("/", async (req,res) => {
 
 router.get("/:id", async (req,res) => {
     try{
-        const warehouse = await Warehouse.findById(req.params.id);
-        res.status(200).send(warehouse);
+        const warehouses = await Warehouse.findById(req.params.id);
+        console.log(req.params.id);
+        res.status(200).send(warehouses);
     }
     catch(error){
         res.status(500).json({ message: error.message });
@@ -40,7 +42,7 @@ router.get("/:id", async (req,res) => {
 
 router.get("/:id/employees", async (req,res) => {
     try{
-        const employees = await Employee.find({ warehouseID : req.id });
+        const employees = await Employee.find({ 'warehouseID' : req.params.id });
         res.status(200).send(employees);
     }
     catch(error){
@@ -58,6 +60,18 @@ router.post("/:id/employees", async (req,res) => {
         const newEmployee = new Employee({ name : name, salary : salary, warehouseID : warehouse._id });
         await newEmployee.save();
         res.status(201).json(newEmployee);
+    }
+    catch(error){
+        res.status(500).json({ message: error.message });
+    }
+} )
+
+
+router.get("/:id/products", async (req,res) => {
+    try{
+        const { products }= await Warehouse.findById(req.params.id).populate({ path : "products.productID"});
+        console.log(products);
+        res.status(200).send(products);
     }
     catch(error){
         res.status(500).json({ message: error.message });
